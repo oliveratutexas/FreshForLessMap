@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="assets/css/storelocator.css" />
+    <title>Find SNAP locations!</title>
+</head>
+
+<body>
+    <h1>Store Locator</h1>
+    <table id="my-table">
+    </table>
+    <div id="bh-sl-map-container" class="bh-sl-map-container">
+        <div id="bh-sl-map" class="bh-sl-map"></div>
+        <div class="bh-sl-loc-list">
+            <ul class="list"></ul>
+        </div>
+    </div>
+    <script src="jquery.min.js"></script>
+    <script src="handlebars.min.js"></script>
+    <script src="sheetrock.min.js"></script>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyAU83xjawq-zzkPJiscwDMTiKixeLN3xAc"></script>
+    <script src="assets/js/plugins/storeLocator/jquery.storelocator.js"></script>
+    <script type="text/javascript">
+        /* var datum = {id:'',name:'',lat:'',lng:"",address:"",address2:"",city,state,postal,phone,web,hours1,hours2,hours3};*/
+        var data = 'pew';
+        $("#my-table").sheetrock({
+            url: "https://docs.google.com/spreadsheets/d/1Lb3yBdFszDqYjmuK878WopekPARj8-YG-tVncOU_NfQ/edit#gid=0",
+            query: "select A,B,C,D,E,F,G,H,I,J,K,L,M",
+            callback: placeData
+        });
+
+        function populate_map() {
+            $(function() {
+                $('#bh-sl-map-container').storeLocator({
+                    'dataType': 'json',
+                    'dataRaw': data
+                });
+            });
+        }
+
+        //https://github.com/chriszarate/sheetrock
+        function placeData(error, options, response) {
+            if (error) {
+                console.log('error');
+
+            } else {
+                console.log(response);
+                data = JSON.stringify(response);
+                populate_map();
+            }
+        }
+    </script>
+</body>
+
+</html>
