@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Map Example - JSON Data</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="assets/css/storelocator.css" />
+</head>
+
+<body>
+
+    <div class="bh-sl-container">
+        <div id="page-header">
+            <h1 class="bh-sl-title">Using Chipotle as an Example</h1>
+            <p>I used locations around Minneapolis and the southwest suburbs. So, for example, Edina, Plymouth, Eden Prarie, etc. would be good for testing the functionality. You can use just the city as the address - ex: Edina, MN.</p>
+        </div>
+
+        <div class="bh-sl-form-container">
+            <form id="bh-sl-user-location" method="post" action="#">
+                <div class="form-input">
+                    <label for="bh-sl-address">Enter Address or Zip Code:</label>
+                    <input type="text" id="bh-sl-address" name="bh-sl-address" />
+                </div>
+
+                <button id="bh-sl-submit" type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div id="bh-sl-map-container" class="bh-sl-map-container">
+            <div id="bh-sl-map" class="bh-sl-map"></div>
+            <div class="bh-sl-loc-list">
+                <ul class="list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script src="assets/js/libs/handlebars.min.js"></script>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyAU83xjawq-zzkPJiscwDMTiKixeLN3xAc"></script>
+    <script src="assets/js/plugins/storeLocator/jquery.storelocator.js"></script>
+    <script src="sheetrock.min.js"></script>
+    <script>
+        var data = {};
+
+        sheetrock({
+            url: "https://docs.google.com/spreadsheets/d/1g7ZbXtqoN2QPXQBPS0fygxKRiud93TTCTSYMzCx4h0U/edit#gid=1036523682",
+            query: "select A,B,C,D,E,F,G,H,I",
+            callback: placeData
+        });
+
+        function placeData(error, options, response) {
+            if (error) {
+                console.log('error');
+            } else {
+
+                var id_num = 0;
+                var filtered_data = response.rows.map(function(row) {
+
+                    dat = row.cellsArray;
+                    var location_dat = {
+                        id: id_num,
+                        name: dat[0],
+                        lat: dat[2],
+                        lng: dat[1],
+                        address: dat[3],
+                        address2: dat[4],
+                        city: dat[5],
+                        state: dat[6],
+                        postal: dat[7],
+                        phone: '281-330-8004',
+                        web: 'www.google.com',
+                        hours1: 'Mon 1-2pm',
+                        hours2: '',
+                        hours3: ''
+                    };
+
+                    id_num += 1;
+                    return location_dat;
+
+                });
+
+                $('#bh-sl-map-container').storeLocator({
+                    'dataType': 'json',
+                    'dataRaw': filtered_data
+                });
+
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
