@@ -11,8 +11,8 @@
 
     <div class="bh-sl-container">
         <div id="page-header">
-            <h1 class="bh-sl-title">Using Chipotle as an Example</h1>
-            <p>I used locations around Minneapolis and the southwest suburbs. So, for example, Edina, Plymouth, Eden Prarie, etc. would be good for testing the functionality. You can use just the city as the address - ex: Edina, MN.</p>
+            <h1 class="bh-sl-title">A list of SNAP Locations near you!</h1>
+            <p></p>
         </div>
 
         <div class="bh-sl-form-container">
@@ -40,13 +40,33 @@
     <script src="assets/js/plugins/storeLocator/jquery.storelocator.js"></script>
     <script src="sheetrock.min.js"></script>
     <script>
-        var data = {};
-
         sheetrock({
             url: "https://docs.google.com/spreadsheets/d/1g7ZbXtqoN2QPXQBPS0fygxKRiud93TTCTSYMzCx4h0U/edit#gid=1036523682",
             query: "select A,B,C,D,E,F,G,H,I",
             callback: placeData
         });
+
+        /* Thanks W3School*/
+        function getLocation() {
+
+            var ret_val = Object(null);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(showPosition);
+            } else {
+                console.log("Geolocation is not supported by this browser.");
+            }
+
+            function showPosition(pos) {
+                ret_val = {
+                    lat: pos.coords.latitude,
+                    long: pos.coords.longitude
+                };
+            }
+
+            return ret_val;
+
+        }
 
         function placeData(error, options, response) {
             if (error) {
@@ -79,10 +99,25 @@
 
                 });
 
-                $('#bh-sl-map-container').storeLocator({
+                var map_props = {
                     'dataType': 'json',
-                    'dataRaw': filtered_data
-                });
+                    'dataRaw': filtered_data,
+                    'slideMap': false,
+                    'autoGeocode': true,
+                    'storeLimit':-1
+                };
+
+
+                /* usr_loc = getLocation();*/
+                /* if (usr_loc != Object(null)) {*/
+                /* */
+                /* map_props['defaultLoc'] = true;*/
+                /* map_props['defaultLat'] = usr_loc.lat;*/
+                /* map_props['defaultLng'] = usr_loc.long;*/
+                /* */
+                /* }*/
+
+                $('#bh-sl-map-container').storeLocator(map_props);
 
             }
         }
